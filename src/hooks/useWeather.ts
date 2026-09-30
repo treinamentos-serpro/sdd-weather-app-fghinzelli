@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { getWeather, searchCities } from '../services/weatherService';
 import type { City, WeatherData } from '../types/weather';
 
-export type WeatherStatus = 'idle' | 'loading' | 'success' | 'error' | 'empty';
+export type WeatherStatus = 'idle' | 'loading' | 'results' | 'success' | 'error' | 'empty';
 
 type LastOperation = { type: 'search'; name: string } | { type: 'weather'; city: City };
 
@@ -10,6 +10,7 @@ export interface UseWeatherResult {
   status: WeatherStatus;
   data: WeatherData | null;
   cities: City[];
+  selectedCity: City | null;
   error: string | null;
   query: string;
   search: (name: string) => Promise<void>;
@@ -25,6 +26,7 @@ export function useWeather(): UseWeatherResult {
   const [status, setStatus] = useState<WeatherStatus>('idle');
   const [data, setData] = useState<WeatherData | null>(null);
   const [cities, setCities] = useState<City[]>([]);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const lastOperationRef = useRef<LastOperation | null>(null);
@@ -34,6 +36,7 @@ export function useWeather(): UseWeatherResult {
     const requestId = ++requestIdRef.current;
     lastOperationRef.current = { type: 'weather', city };
     setStatus('loading');
+    setSelectedCity(city);
     setData(null);
     setError(null);
 
@@ -63,6 +66,7 @@ export function useWeather(): UseWeatherResult {
     setStatus('loading');
     setData(null);
     setCities([]);
+    setSelectedCity(null);
     setError(null);
 
     try {
@@ -79,16 +83,7 @@ export function useWeather(): UseWeatherResult {
         return;
       }
 
-      const firstCity = results[0];
-      lastOperationRef.current = { type: 'weather', city: firstCity };
-      const weather = await getWeather(firstCity);
-
-      if (requestId !== requestIdRef.current) {
-        return;
-      }
-
-      setData(weather);
-      setStatus('success');
+      setStatus('results');
     } catch (requestError) {
       if (requestId !== requestIdRef.current) {
         return;
@@ -114,5 +109,5 @@ export function useWeather(): UseWeatherResult {
     await selectCity(operation.city);
   }
 
-  return { status, data, cities, error, query, search, selectCity, retry };
+  return { status, data, cities, selectedCity, error, query, search, selectCity, retry };
 }

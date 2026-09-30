@@ -19,6 +19,7 @@ function mockWeatherState(overrides: Partial<UseWeatherResult> = {}) {
     status: 'idle',
     data: null,
     cities: [],
+    selectedCity: null,
     error: null,
     query: '',
     ...actions,
@@ -46,6 +47,7 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByRole('status')).toHaveTextContent('Carregando dados...');
+    expect(screen.getByRole('main')).toHaveAttribute('aria-busy', 'true');
   });
 
   it('renderiza empty', () => {
@@ -53,6 +55,22 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByRole('status')).toHaveTextContent('Nenhuma cidade encontrada.');
+  });
+
+  it('renderiza os resultados e seleciona a cidade ativada pelo teclado', async () => {
+    const user = userEvent.setup();
+    mockWeatherState({ status: 'results', cities: [mockCity] });
+    render(<App />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('Foi encontrada 1 cidade.');
+    const resultsHeading = screen.getByRole('heading', { name: 'Cidades encontradas' });
+    expect(resultsHeading).toHaveFocus();
+    const cityButton = screen.getByRole('button', { name: 'Selecionar São Paulo, Brasil' });
+    await user.tab();
+    expect(cityButton).toHaveFocus();
+    await user.keyboard('{Enter}');
+
+    expect(actions.selectCity).toHaveBeenCalledWith(mockCity);
   });
 
   it('renderiza error e chama retry', async () => {
@@ -67,7 +85,7 @@ describe('App', () => {
 
   it('renderiza success e mantém a unidade como estado de UI', async () => {
     const user = userEvent.setup();
-    mockWeatherState({ status: 'success', data: mockWeatherData, cities: [mockCity] });
+    mockWeatherState({ status: 'success', data: mockWeatherData, selectedCity: mockCity });
     render(<App />);
 
     expect(screen.getByText('23,4 °C')).toBeInTheDocument();

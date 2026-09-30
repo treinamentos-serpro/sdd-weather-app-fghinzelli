@@ -50,12 +50,12 @@ export default function SearchBar({ onSearch, disabled = false, inputRef }: Sear
           aria-invalid={hasError}
           aria-describedby={hasError ? errorId : undefined}
           placeholder="Digite uma cidade"
-          className="min-w-0 flex-1 rounded border border-white/10 bg-night-800 px-3 py-2 text-white placeholder:text-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-w-0 flex-1 rounded border border-white/40 bg-night-800 px-3 py-2 text-white placeholder:text-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={disabled}
-          className="rounded bg-accent-600 px-5 py-2 font-medium text-white hover:bg-accent-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded bg-accent-600 px-5 py-2 font-medium text-white enabled:hover:bg-accent-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Buscar
         </button>

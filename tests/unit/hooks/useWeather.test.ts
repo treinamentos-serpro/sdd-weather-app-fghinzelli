@@ -30,14 +30,14 @@ describe('useWeather', () => {
       status: 'idle',
       data: null,
       cities: [],
+      selectedCity: null,
       error: null,
       query: '',
     });
   });
 
-  it('busca cidades e carrega o clima da primeira', async () => {
+  it('busca cidades sem consultar o clima antes da seleção', async () => {
     vi.mocked(searchCities).mockResolvedValue([mockCity, secondCity]);
-    vi.mocked(getWeather).mockResolvedValue(mockWeatherData);
     const { result } = renderHook(() => useWeather());
 
     await act(async () => {
@@ -45,11 +45,12 @@ describe('useWeather', () => {
     });
 
     expect(searchCities).toHaveBeenCalledWith('São Paulo');
-    expect(getWeather).toHaveBeenCalledWith(mockCity);
+    expect(getWeather).not.toHaveBeenCalled();
     expect(result.current).toMatchObject({
-      status: 'success',
-      data: mockWeatherData,
+      status: 'results',
+      data: null,
       cities: [mockCity, secondCity],
+      selectedCity: null,
       error: null,
       query: 'São Paulo',
     });
@@ -79,6 +80,7 @@ describe('useWeather', () => {
     expect(getWeather).toHaveBeenCalledWith(secondCity);
     expect(result.current.status).toBe('success');
     expect(result.current.data).toBe(mockWeatherData);
+    expect(result.current.selectedCity).toBe(secondCity);
   });
 
   it('repete a última operação após uma falha', async () => {
@@ -90,6 +92,10 @@ describe('useWeather', () => {
 
     await act(async () => {
       await result.current.search('São Paulo');
+    });
+
+    await act(async () => {
+      await result.current.selectCity(mockCity);
     });
 
     expect(result.current.status).toBe('error');

@@ -1,5 +1,6 @@
 import { CloudSun } from 'lucide-react';
 import { useState } from 'react';
+import CityResults from './components/CityResults';
 import CurrentWeather from './components/CurrentWeather';
 import ForecastList from './components/ForecastList';
 import SearchBar from './components/SearchBar';
@@ -12,8 +13,7 @@ import type { Unit } from './types/weather';
 
 export default function App() {
   const [unit, setUnit] = useState<Unit>('celsius');
-  const { status, data, cities, error, search, retry } = useWeather();
-  const activeCity = cities[0];
+  const { status, data, cities, selectedCity, error, search, selectCity, retry } = useWeather();
 
   return (
     <div className="min-h-screen bg-night-900 font-sans text-white">
@@ -35,33 +35,37 @@ export default function App() {
         </div>
       </header>
 
-      <main className="min-w-0">
+      {status === 'loading' && (
+        <div className="mx-auto max-w-5xl py-8">
+          <LoadingState />
+        </div>
+      )}
+
+      <main aria-busy={status === 'loading'} className="min-w-0">
         {status === 'idle' && (
           <section className="mx-auto max-w-5xl px-4 py-10 sm:px-8">
             <h2 className="text-xl font-semibold">Nenhuma cidade selecionada</h2>
           </section>
-        )}
-        {status === 'loading' && (
-          <div className="mx-auto max-w-5xl py-8">
-            <LoadingState />
-          </div>
         )}
         {status === 'empty' && (
           <div className="mx-auto max-w-5xl py-8">
             <EmptyState />
           </div>
         )}
+        {status === 'results' && (
+          <CityResults cities={cities} onSelect={(city) => void selectCity(city)} />
+        )}
         {status === 'error' && (
           <div className="mx-auto max-w-5xl py-8">
             <ErrorState message={error ?? undefined} onRetry={() => void retry()} />
           </div>
         )}
-        {status === 'success' && data && activeCity && (
+        {status === 'success' && data && selectedCity && (
           <>
             <p role="status" className="sr-only">
-              Previsão para {activeCity.name} carregada.
+              Previsão para {selectedCity.name} carregada.
             </p>
-            <CurrentWeather city={activeCity} current={data.current} unit={unit} />
+            <CurrentWeather city={selectedCity} current={data.current} unit={unit} />
             <ForecastList forecast={data.forecast} unit={unit} />
           </>
         )}

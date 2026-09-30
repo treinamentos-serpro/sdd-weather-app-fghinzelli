@@ -13,6 +13,14 @@ async function mockSuccessfulWeather(page: Page) {
             latitude: -23.5505,
             longitude: -46.6333,
           },
+          {
+            id: 3452465,
+            name: 'Rio Claro',
+            admin1: 'São Paulo',
+            country: 'Brasil',
+            latitude: -22.4114,
+            longitude: -47.5613,
+          },
         ],
       },
     });
@@ -49,13 +57,40 @@ test('busca uma cidade, mostra a previsão e converte a temperatura para Fahrenh
   await page.goto('/');
   await page.getByRole('searchbox', { name: 'Cidade' }).fill('São Paulo');
   await page.getByRole('button', { name: 'Buscar' }).click();
+  await page.getByRole('button', { name: 'Selecionar São Paulo, Brasil' }).click();
 
   await expect(page.getByRole('heading', { name: 'São Paulo, Brasil' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Previsão para 5 dias' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Fahrenheit' }).click();
 
-  await expect(page.getByText('32,0 °F', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: 'São Paulo, Brasil' }).getByText('32,0 °F', { exact: true }),
+  ).toBeVisible();
+});
+
+test('seleciona por teclado o resultado focado e mantém foco visível', async ({ page }) => {
+  await mockSuccessfulWeather(page);
+  await page.goto('/');
+
+  const searchbox = page.getByRole('searchbox', { name: 'Cidade' });
+  await searchbox.fill('São Paulo');
+  await searchbox.press('Enter');
+  await expect(page.getByRole('status')).toHaveText('Foram encontradas 2 cidades.');
+
+  const resultsHeading = page.getByRole('heading', { name: 'Cidades encontradas' });
+  await expect(resultsHeading).toBeFocused();
+  await expect(resultsHeading).toHaveCSS('outline-style', 'solid');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  const secondResult = page.getByRole('button', {
+    name: 'Selecionar Rio Claro, São Paulo, Brasil',
+  });
+  await expect(secondResult).toBeFocused();
+  await expect(secondResult).toHaveCSS('outline-style', 'solid');
+  await page.keyboard.press('Enter');
+
+  await expect(page.getByRole('heading', { name: 'Rio Claro, São Paulo, Brasil' })).toBeVisible();
 });
 
 test('mostra o estado vazio quando o geocoding não retorna results', async ({ page }) => {
@@ -84,9 +119,12 @@ test('renderiza o clima no fluxo principal em viewport mobile', async ({ page })
   await page.goto('/');
   await page.getByRole('searchbox', { name: 'Cidade' }).fill('São Paulo');
   await page.getByRole('button', { name: 'Buscar' }).click();
+  await page.getByRole('button', { name: 'Selecionar São Paulo, Brasil' }).click();
 
   await expect(page.getByRole('heading', { name: 'São Paulo, Brasil' })).toBeVisible();
-  await expect(page.getByText('0,0 °C', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: 'São Paulo, Brasil' }).getByText('0,0 °C', { exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Previsão para 5 dias' })).toBeVisible();
   await expect(page.getByRole('listitem')).toHaveCount(5);
 });
