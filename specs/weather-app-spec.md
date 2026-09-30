@@ -128,6 +128,20 @@ As histórias e arquétipos precisam ser validados com usuários representativos
 
 As metas NFR-02 a NFR-07 e a política local de retenção são uma baseline proposta para aprovação. NFR-04 é gate de lançamento até a validação de disponibilidade do provedor.
 
+## Matriz de Rastreabilidade
+
+A matriz liga cada User Story aos critérios de aceite que a verificam e aos requisitos não funcionais que restringem sua implementação ou validação. Os critérios e NFRs são referenciados pelos IDs definidos acima; um mesmo critério pode cobrir mais de uma história.
+
+| User Story | Acceptance Criteria | NFRs relevantes |
+|---|---|---|
+| **US-01 — Encontrar uma cidade** | AC-01.1 a AC-01.4; AC-02.1; AC-07.1 a AC-07.4 | NFR-01, NFR-02, NFR-03, NFR-04, NFR-05, NFR-06, NFR-07, NFR-08 |
+| **US-02 — Consultar condições atuais** | AC-03.1; AC-07.2 a AC-07.5 | NFR-01, NFR-02, NFR-03, NFR-04, NFR-05, NFR-06, NFR-07 |
+| **US-03 — Planejar uma viagem** | AC-04.1; AC-07.2 a AC-07.5 | NFR-01, NFR-02, NFR-03, NFR-04, NFR-05, NFR-06, NFR-07 |
+| **US-04 — Escolher o dia da atividade** | AC-04.1; AC-07.2 a AC-07.5 | NFR-01, NFR-02, NFR-03, NFR-04, NFR-05, NFR-06, NFR-07 |
+| **US-05 — Preferir uma unidade de temperatura** | AC-05.1, AC-05.2 | NFR-01, NFR-02, NFR-06, NFR-08 |
+| **US-06 — Recuperar uma consulta** | AC-01.2; AC-07.1 a AC-07.5 | NFR-01, NFR-02, NFR-05, NFR-06, NFR-07, NFR-08 |
+| **US-07 — Entender a interface** | AC-06.1 | NFR-01, NFR-02, NFR-06, NFR-07 |
+
 ## Edge Cases
 
 | Cenário | Comportamento esperado |
