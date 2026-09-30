@@ -27,10 +27,12 @@ export default function App() {
                 <p className="text-xs text-white/70">Dados da Open-Meteo</p>
               </div>
             </div>
-            <UnitToggle unit={unit} onChange={setUnit} />
           </div>
-          <div className="w-full max-w-xl">
-            <SearchBar onSearch={(name) => void search(name)} />
+          <div className="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-end">
+            <div className="w-full min-w-0 max-w-xl sm:flex-1">
+              <SearchBar onSearch={(name) => void search(name)} />
+            </div>
+            <UnitToggle unit={unit} onChange={setUnit} />
           </div>
         </div>
       </header>

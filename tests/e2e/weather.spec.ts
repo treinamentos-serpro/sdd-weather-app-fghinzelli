@@ -112,6 +112,27 @@ test('mostra o estado vazio quando o geocoding não retorna results', async ({ p
   expect(forecastRequested).toBe(false);
 });
 
+test('posiciona a unidade ao lado da busca no desktop e abaixo no mobile', async ({ page }) => {
+  await page.goto('/');
+
+  for (const width of [1024, 375]) {
+    await page.setViewportSize({ width, height: 812 });
+    const search = await page.getByRole('search', { name: 'Buscar cidade' }).boundingBox();
+    const unit = await page.getByRole('group', { name: 'Unidade de temperatura' }).boundingBox();
+
+    expect(search).not.toBeNull();
+    expect(unit).not.toBeNull();
+    if (!search || !unit) throw new Error('Controles de busca e unidade não visíveis');
+
+    if (width === 1024) {
+      expect(unit.x).toBeGreaterThanOrEqual(search.x + search.width - 1);
+    } else {
+      expect(unit.y).toBeGreaterThanOrEqual(search.y + search.height - 1);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
+});
+
 test('renderiza o clima no fluxo principal em viewport mobile', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await mockSuccessfulWeather(page);
