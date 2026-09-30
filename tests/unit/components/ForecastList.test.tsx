@@ -11,8 +11,8 @@ describe('ForecastList', () => {
     const cards = within(list).getAllByRole('article');
     expect(cards).toHaveLength(5);
     expect(within(cards[0]).getByText('Máx.').closest('dl')).toHaveClass('grid-cols-1');
-    expect(cards[0]).toHaveAccessibleName(/qua.*30.*set/i);
-    expect(cards[4]).toHaveAccessibleName(/dom.*4.*out/i);
+    expect(cards[0]).toHaveAccessibleName('Previsão para Hoje');
+    expect(cards[4]).toHaveAccessibleName(/previsão para dom/i);
     expect(within(cards[0]).getByText('Parcialmente nublado')).toBeInTheDocument();
     expect(within(cards[0]).getByText('25,6 °C')).toBeInTheDocument();
     expect(within(cards[0]).getByText('17,2 °C')).toBeInTheDocument();

@@ -130,7 +130,7 @@ export async function getWeather(city: City): Promise<WeatherData> {
     weatherCode: daily.weather_code?.[index] ?? null,
     minTemperatureC: daily.temperature_2m_min?.[index] ?? null,
     maxTemperatureC: daily.temperature_2m_max?.[index] ?? null,
-    maxPrecipitationProbabilityPercent: daily.precipitation_probability_max?.[index] ?? null,
+    maxPrecipitationProbabilityPercent: daily.precipitation_probability_max?.[index] ?? 0,
   }));
 
   return {

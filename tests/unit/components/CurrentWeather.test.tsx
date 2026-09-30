@@ -1,6 +1,25 @@
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import CurrentWeather from '../../../src/components/CurrentWeather';
+import UnitToggle from '../../../src/components/UnitToggle';
 import { mockCity, mockWeatherData } from '../../../src/mocks/weather';
+import type { Unit } from '../../../src/types/weather';
+
+function WeatherWithUnitToggle() {
+  const [unit, setUnit] = useState<Unit>('celsius');
+
+  return (
+    <>
+      <UnitToggle unit={unit} onChange={setUnit} />
+      <CurrentWeather
+        city={mockCity}
+        current={{ ...mockWeatherData.current, temperatureC: 0 }}
+        unit={unit}
+      />
+    </>
+  );
+}
 
 describe('CurrentWeather', () => {
   it('exibe cidade, condição, temperatura e métricas com valores zero válidos', () => {
@@ -37,6 +56,18 @@ describe('CurrentWeather', () => {
     expect(screen.getByText('32,0 °F')).toBeInTheDocument();
     expect(screen.getByText('0 km/h')).toBeInTheDocument();
     expect(screen.getAllByText('Indisponível')).toHaveLength(5);
+  });
+
+  it('converte 0 °C para 32 °F ao alternar a unidade', async () => {
+    const user = userEvent.setup();
+    render(<WeatherWithUnitToggle />);
+
+    const report = screen.getByRole('region', { name: 'São Paulo, Brasil' });
+    expect(within(report).getByText('0,0 °C')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Fahrenheit' }));
+
+    expect(within(report).getByText('32,0 °F')).toBeInTheDocument();
   });
 
   it('converte valores não nulos para Fahrenheit sem alterar vento ou precipitação', () => {

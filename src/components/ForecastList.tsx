@@ -19,9 +19,9 @@ export default function ForecastList({ forecast, unit }: ForecastListProps) {
           </p>
         ) : (
           <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {forecast.map((day) => (
+            {forecast.map((day, dayIndex) => (
               <li key={day.date} className="min-w-0">
-                <ForecastCard day={day} unit={unit} />
+                <ForecastCard day={day} unit={unit} dayIndex={dayIndex} />
               </li>
             ))}
           </ul>

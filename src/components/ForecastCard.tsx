@@ -6,10 +6,11 @@ import type { ForecastDay, Unit } from '../types/weather';
 interface ForecastCardProps {
   day: ForecastDay;
   unit: Unit;
+  dayIndex: number;
 }
 
-export default function ForecastCard({ day, unit }: ForecastCardProps) {
-  const dayLabel = formatDayLabel(day.date);
+export default function ForecastCard({ day, unit, dayIndex }: ForecastCardProps) {
+  const dayLabel = formatDayLabel(day.date, dayIndex);
   const { label, icon: WeatherIcon } = getWeatherCondition(day.weatherCode);
   const precipitation = day.maxPrecipitationProbabilityPercent;
   const rainChance =
